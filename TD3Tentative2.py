@@ -10,37 +10,47 @@ from collections import Counter
 import pandas as pd
 import copy
 import time as t
+import random
 
 #Variable
-pd.set_option('min_rows', 20)
+nbRandom = 0.75;
+pd.set_option('min_rows', 20);
 pathApprentissage = 'data.csv';
 pathTest = 'preTest.csv';
 pathExecutable = 'finalTest.csv';
 pathWrite = 'result.txt'
 compteurVarConnu = 0;
 afficherMatriceConfusion = True;
-kMax = 15;
+kMax = 5;
 
 #Return le dataframe du csv permetant le calcul de k
-def importDataWithDataFrame(path):
+def importDataWithDataFrame(path,fileApprentissage):
+    global compteurVarConnu;
     df=pd.read_csv(path)
     if(df.axes[1][0] != '0'):
         df = pd.read_csv(path,header=None)
         df.columns = df.columns.map(str)
-
-    if(path == pathApprentissage):
+    
+    if fileApprentissage:
         df['prediction'] = df[str(len(df.columns) - 1)]
-        global compteurVarConnu;
-        compteurVarConnu = len(df)
     else:
-        df["prediction"] = "None";
+        df[str(len(df.columns))] = "None"
+        df['prediction'] = "None"
+    compteurVarConnu = compteurVarConnu + len(df);
     return df
+    
+def createNoneValue(data):
+    global compteurVarConnu;
+    for i in data.index:
+        if(random.random() > nbRandom):
+            data.loc[i, 'prediction'] = "None";
+            compteurVarConnu = compteurVarConnu - 1;
       
 def calculEuclidien(i,j,data):
     res = 0;
     for k in range(0,(len(data.columns) - 2)):
         res = res + (data[str(k)][i] - data[str(k)][j])**2
-    
+        
     return [math.sqrt(res),data['prediction'][j]];
 
 def knn(data,i):
@@ -54,7 +64,7 @@ def knn(data,i):
     return distancePointTest;
     
 
-def remplissagePoint(data,k):
+def remplissagePoint(data,k,lastRemplissage):
     newdata = copy.deepcopy(data);
     #pour tout les points qui n'ont pas de prédiction
     tabPrediction = []
@@ -62,8 +72,8 @@ def remplissagePoint(data,k):
             #On calcul distance euclidienne
             knnTab = knn(data,i);
             #On short au k choisi
-            FinalChoixTab = [];  
-            for j in range(0,k+1):
+            FinalChoixTab = [];
+            for j in range(0,k):
                 FinalChoixTab.append(knnTab[j][1]);
             #On determine la classe
             FinalChoixTab = Counter(FinalChoixTab);
@@ -71,6 +81,13 @@ def remplissagePoint(data,k):
             tabPrediction.append([list(FinalChoixTab.most_common(1)[0])[0],i]);
     for j in tabPrediction:
         newdata.loc[j[1],'prediction'] = j[0]
+    if(lastRemplissage):
+        print("Remplissage du DataFrame final : OK ... ");
+        fichier = open(pathWrite, "w")
+        for j in tabPrediction:
+            print(j);
+            fichier.write(j[0] + "\n")
+        fichier.close()
     return newdata;
 
 def MatriceConfusion(data):
@@ -104,7 +121,7 @@ def Bestk(data):
         print("Debut Analyse du k = ",k ," : OK")
         #On rempli notre tableau avec les prévisions de l'algo
         newdata = copy.deepcopy(data)
-        newdata = remplissagePoint(newdata,k);
+        newdata = remplissagePoint(newdata,k,False);
                 
         #prediction & matrice
         print("Debut Calcul ratioPrediction k = ",k ," : OK")
@@ -124,7 +141,7 @@ def checklabel():
     #ce fichier s'attend à lire 3000 prédictions, une par ligne
     #réduisez nbLines en période de test.
     nbLines = 3000
-    fd =open("result.txt",'r')
+    fd =open(pathWrite,'r')
     lines = fd.readlines()
     
     
@@ -140,45 +157,28 @@ def checklabel():
     	print("Labels Check : fail!")
     else:
     	print("Labels Check : Successfull!")
-        
-def predictionFinal(bestApprentissage):
-    newdata = importDataWithDataFrame(False);
-    newdata["prediction"] = "None"
-    newdata2 = bestApprentissage[2];
-    newdata2 = newdata2.append(newdata, ignore_index=True);
-    
-    fichier = open(pathWrite, "w")
-    for i in newdata.index:
-        print(i)
-        #On calcul distance euclidienne
-        knnTab = knn(newdata2,i);
-        #On short au k choisi
-        FinalChoixTab = [];
-        for j in range(0,bestApprentissage[0]):
-                FinalChoixTab.append(knnTab[j][1]);   
-        #On determine la classe
-        FinalChoixTab = Counter(FinalChoixTab);
-        #on l'ajoute a la tab data
-        newdata.loc[i, 'prediction'] = list(FinalChoixTab.keys())[0];
-        fichier.write(list(FinalChoixTab.keys())[0] + "\n")
-    fichier.close()
-    checklabel()
-        
+                
 if __name__ == "__main__":
     #METHODE DATAFRAME
     début=t.process_time()
     print("Lancement de l'IA : OK ... ");
     #on recuperere les data , on remplie les colums d'apprentissage et on trouve le meilleur k
-    data = importDataWithDataFrame(pathApprentissage).append(importDataWithDataFrame(pathTest), ignore_index=True)
-
-    bestApprentissage = Bestk(data)
-    print("Valeur de k optimal trouvé : OK ... ");
+    data = importDataWithDataFrame(pathApprentissage,True).append(importDataWithDataFrame(pathTest,True), ignore_index=True)
     
+    createNoneValue(data);
+    print("Generation du dataFrame : OK ... ");
+    bestApprentissage = Bestk(data)
+    print("Valeur de k (",bestApprentissage,") optimal trouvé : OK ... ");
     #on remet les bonne valeur de preTest pour enlever les erreurs
     data['prediction'] = data[str(len(data.columns) - 2)]
-    
+        
     #on prédis les valeurs sans outpout
-    predictionFinal(bestApprentissage)   
+    data = data.append(importDataWithDataFrame(pathExecutable,False),ignore_index=True);
+    print("Creation du DataFrame final : OK ... ");
+    remplissagePoint(data,bestApprentissage[0],True)
+    print("Stockage dans un txt du DataFrame final : OK ... ");
+    checklabel()   
+    print("Verification du DataFrame final : OK ... ");
     
     fin=t.process_time()
     temps=fin-début
