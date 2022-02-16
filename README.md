@@ -12,7 +12,7 @@
 
 ## Objectifs
 
-- Prédire les classes d’un ensemble de données.
+- Prédire les classes d’un ensemble de données d'iris.
 
 ## Techno
 
