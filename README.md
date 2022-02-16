@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="./Assets/header.jpg" alt="KNN" />
+  <img src="./Assets/header.png" alt="KNN" />
 </h1>
 
 ---
