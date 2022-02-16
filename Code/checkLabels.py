@@ -24,5 +24,3 @@ if count<nbLines:
 	print("Labels Check : fail!")
 else:
 	print("Labels Check : Successfull!")
-
-
