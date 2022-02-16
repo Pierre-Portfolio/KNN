@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="./Assets/header.jpg" alt="Valeur Fonciere" />
+  <img src="./Assets/header.jpg" alt="KNN" />
 </h1>
 
 ---
@@ -8,27 +8,17 @@
 
 ## Petit résumé
 
-- La valeur foncière est la valeur d’un terrain. Elle est le plus souvent analysée en fonction de son potentiel de construction futur. Nous analyserons ici celle des bien immobilier français en 2020.
+- La méthode des K plus proches voisins (KNN) a pour but de classifier des points cibles en fonction de leurs distances par rapport à des points constituant un échantillon d’apprentissage.
 
 ## Objectifs
 
-- Réaliser une étude des bien immobilier Français.
-- Réaliser une api django.
+- Prédire les classes d’un ensemble de données.
 
 ## Techno
 
 - Python
-- Jupyter
-- Django
-
-- HTML
-- CSS
-- Tailwind
-
-## API
-<img src="./Assets/demo.gif" alt="Redicube" />
+- Spyder
 
 ## Auteur
 
 - [@Pierre](https://github.com/Pierre-Portfolio)
-- [@Tom](https://github.com/Flaye)
