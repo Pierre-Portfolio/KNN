@@ -10,11 +10,7 @@
 ## Objectifs
 
 - Prédire les classes d’un ensemble de données d'iris.
-- Avoir la meillieur accuracy possible en évitant l'overfitting.
-- Sauvegarder celui-ci dans un fichier texte.
-
-## Résultat
-
+- Avoir la meillieur accuracy possible tout en évitant l'overfitting.
 
 ## Techno
 
