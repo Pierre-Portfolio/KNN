@@ -4,13 +4,13 @@
 
 ## Petit résumé
 
-- La méthode des K plus proches voisins (KNN) a pour but de classifier des points cibles en fonction de leurs distances par rapport à des points constituant un échantillon d’apprentissage.
+- En machine learning, la méthode des K plus proches voisins (KNN) a pour but de classifier les points cibles en fonction de leurs distance par rapport à des points de référence constituant un échantillon d’apprentissage.
 <img src="./Assets/header.png" alt="KNN" />
 
 ## Objectifs
 
-- Prédire les classes d’un ensemble de données d'iris.
-- Avoir la meillieur accuracy possible tout en évitant l'overfitting.
+- Prédire les classes d’un ensemble de données, ici des iris.
+- Avoir la meilleure précision possible tout en évitant le surapprentissage.
 
 ## Techno
 
